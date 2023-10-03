@@ -1,0 +1,26 @@
+{
+  "name": "jay_doshi_002762973_01",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "base-64": "^1.0.0",
+    "bcrypt": "^5.1.1",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "csv-parser": "^3.0.0",
+    "express": "^4.18.2",
+    "file-system": "^2.2.2",
+    "mysql2": "^3.6.1",
+    "pg": "^8.11.3",
+    "pg-hstore": "^2.3.4",
+    "pg-promise": "^11.5.4",
+    "sequelize": "^6.33.0"
+  }
+}
