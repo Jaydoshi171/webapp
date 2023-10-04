@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+// import routes from './routes/assignment_routes'
 
 let base64 = require('base-64');
 
@@ -13,8 +14,12 @@ const auth = require('./controllers/authentication');
 
 app.use(bodyParser.json());
 
+app.use(express.json());
+app.use(express.urlencoded());
 
-app.get('/healthz',auth,async (req, res) => {
+app.use('',require('./routes/assignment_routes'));
+
+app.get('/healthz',async (req, res) => {
     try {
         
         if (req.body && Object.keys(req.body).length > 0){
