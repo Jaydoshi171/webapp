@@ -13,7 +13,7 @@ jobs:
         run: docker pull mysql:latest
 
       - name: Start MySQL Service
-        run: docker run --name mysql -e MYSQL_ROOT_PASSWORD=Jay@1998 -e MYSQL_DATABASE=healthCheck -e MYSQL_USER=root -d -p 3000:3306 mysql:latest
+        run: docker run --name mysql -e MYSQL_ROOT_PASSWORD=Jay@1998 -e MYSQL_DATABASE=healthCheck -e MYSQL_USER=root -d -p 3306:3000 mysql:latest
       - run: sleep 10
       - uses: actions/checkout@v3
 
