@@ -1,9 +1,9 @@
-const env = require('dotenv');
-env.config();
+// const env = require('dotenv');
+// env.config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
-const port = process.env.database;
+const port = 3000;
 
 const sequelize = require('./util/config')
 const Account = require('./models/Account')
