@@ -43,7 +43,7 @@ const Assignment = sequelize.define('Assignments', {
 
 (async () => {
 try {
-    await Account.sync({ alter: true });
+    await Assignment.sync({ alter: true });
     console.log('User table synced or altered successfully.');
 } catch (error) {
     console.error('Error syncing or altering User table:', error);

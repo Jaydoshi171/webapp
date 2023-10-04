@@ -1,0 +1,25 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Pull MySQL Docker image
+        run: docker pull mysql:latest
+
+      - name: Start MySQL Service
+        run: docker run --name mysql -e MYSQL_ROOT_PASSWORD=Jay@1998 -e MYSQL_DATABASE=healthCheck -e MYSQL_USER=root -d -p 3306:3306 mysql:latest
+      - run: sleep 10
+
+      - name: Use Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 20.7.0
+      
+      - run: npm ci
+      - run: npm run test
