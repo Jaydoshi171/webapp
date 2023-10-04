@@ -21,6 +21,6 @@ jobs:
         with:
           node-version: 20.7.0
 
-      - run: cd ..
+    #   - run: cd ..
       - run: npm i
       - run: npm run test
