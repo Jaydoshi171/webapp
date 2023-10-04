@@ -5,23 +5,53 @@ on:
     branches: [main]
 
 jobs:
-  build:
+  connect-remote:
     runs-on: ubuntu-latest
 
+    services:
+      mysql:
+        image: mysql:latest
+        env:
+          MYSQL_ROOT_PASSWORD: "Jay@1998"
+          MYSQL_DATABASE: "healthCheck"
+          MYSQL_ROOT_HOST: "%"
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
     steps:
-      - name: Pull MySQL Docker image
-        run: docker pull mysql:latest
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-      - name: Start MySQL Service
-        run: docker run --name mysql -e MYSQL_ROOT_PASSWORD=Jay@1998 -e MYSQL_DATABASE=healthCheck -e MYSQL_USER=root -d -p 3306:8000 mysql:latest
-      - run: sleep 10
-      - uses: actions/checkout@v3
-
-      - name: Use Node.js
+      - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: 20.7.0
+          node-version: 18
 
-      - run: ls -l    
-      - run: npm install
-      - run: npm run test
+      - name: Install dependencies
+        run: npm i
+
+      - name: Run tests
+        run: npm test
+
+# jobs:
+#   build:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: Pull MySQL Docker image
+#         run: docker pull mysql:latest
+
+#       - name: Start MySQL Service
+#         run: docker run --name mysql -e MYSQL_ROOT_PASSWORD=Jay@1998 -e MYSQL_DATABASE=healthCheck -e MYSQL_USER=root -d -p 3306:8000 mysql:latest
+#       - run: sleep 10
+#       - uses: actions/checkout@v3
+
+#       - name: Use Node.js
+#         uses: actions/setup-node@v2
+#         with:
+#           node-version: 20.7.0
+
+#       - run: ls -l    
+#       - run: npm install
+#       - run: npm run test
