@@ -3,6 +3,12 @@ const bcrypt = require("bcrypt");
 const Account = require('../models/Account')
 
 async function basicAuth(req, res, next) {
+    try{
+        await sequelize.authenticate();
+    }
+    catch{
+        res.status(503).send();
+    }
     console.log("req.headers.authorization "+req.headers.authorization)
     console.log("1 " +req.headers)
     if (!req.headers.authorization || req.headers.authorization.indexOf('Basic ') === -1) {
@@ -15,6 +21,9 @@ async function basicAuth(req, res, next) {
     console.log("email"+email)
     const account = await Account.findOne({ where: { email: email}});
     console.log(account)
+    if (!account) {
+        return res.status(401).json({ message: 'Invalid Authentication Credentials' }).send();
+    }
     const result = await bcrypt.compareSync(password,account.password);
     if (!result) {
         return res.status(401).json({ message: 'Invalid Authentication Credentials' }).send();

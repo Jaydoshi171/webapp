@@ -29,6 +29,10 @@ const Account = sequelize.define('Account', {
     type: DataTypes.STRING,
     allowNull: false,
   }
+},{
+  // tableName: 'Assignments',
+  createdAt:'account_created',
+  updatedAt: 'account_updated',
 });
 
 Account.beforeCreate((account) => {
