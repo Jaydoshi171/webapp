@@ -1,11 +1,9 @@
+const env = require('dotenv');
+env.config();
 const express = require('express');
 const bodyParser = require('body-parser');
-// import routes from './routes/assignment_routes'
-
-let base64 = require('base-64');
-
 const app = express();
-const port = 3000;
+const port = process.env.database;
 
 const sequelize = require('./util/config')
 const Account = require('./models/Account')
