@@ -1,8 +1,7 @@
+// const env = require('dotenv');
+// env.config();
 const express = require('express');
 const bodyParser = require('body-parser');
-
-let base64 = require('base-64');
-
 const app = express();
 const port = 3000;
 
@@ -13,8 +12,12 @@ const auth = require('./controllers/authentication');
 
 app.use(bodyParser.json());
 
+app.use(express.json());
+app.use(express.urlencoded());
 
-app.get('/healthz',auth,async (req, res) => {
+app.use('',require('./routes/assignment_routes'));
+
+app.get('/healthz',async (req, res) => {
     try {
         
         if (req.body && Object.keys(req.body).length > 0){
@@ -52,3 +55,5 @@ app.all('/healthz',(req, res) => {
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
+
+module.exports = app;
