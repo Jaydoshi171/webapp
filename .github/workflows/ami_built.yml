@@ -1,0 +1,34 @@
+name: Validate Packer file
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  validate-packer-file:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Packer
+        uses: hashicorp/setup-packer@v1
+        with:
+          version: '1.7.2'
+
+      - name: create and configure
+        run: |
+          touch .env
+          echo port=${{ secrets.PORT }} >> .env
+          echo host=${{ secrets.HOSTIP }} >> .env
+          echo dialect=${{ secrets.DIALECT }} >> .env
+          echo user=${{ secrets.USER }} >> .env
+          echo password=${{ secrets.PASSWORD }}>> .env
+          echo database=${{ secrets.DATABASE }} >> .env
+
+      - name: zip all files
+        run: zip -r webapp.zip .
+
+      - name: Build ami with packer
+        run: packer build aws-debian.pkr.hcl

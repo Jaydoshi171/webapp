@@ -1,0 +1,21 @@
+name: Validate Packer file
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate-packer-file:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Packer
+        uses: hashicorp/setup-packer@v1
+        with:
+          version: '1.7.2'
+
+      - name: Validate Packer template
+        run: packer validate aws-debian.pkr.hcl
