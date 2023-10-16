@@ -1,4 +1,4 @@
-name: Validate Packer file
+name:  Linter
 
 on:
   pull_request:

@@ -1,5 +1,5 @@
 packer {
-    required_plugins {
+  required_plugins {
     amazon = {
       source  = "github.com/hashicorp/amazon"
       version = ">= 1.2.0"
@@ -29,7 +29,7 @@ variable "subnet_id" {
 
 # https://www.packer.io/plugins/builders/amazon/ebs
 source "amazon-ebs" "my-ami" {
-  region     = "${var.aws_region}"
+  region          = "${var.aws_region}"
   ami_name        = "csye6225_${formatdate("YYYY_MM_DD_hh_mm_ss", timestamp())}"
   ami_description = "AMI for CSYE 6225"
   ami_regions = [
@@ -53,8 +53,8 @@ source "amazon-ebs" "my-ami" {
   //   most_recent = true
   //   owners      = ["192072421737"]
   // }
-  ssh_username  = "${var.ssh_username}"
-//   subnet_id     = "${var.subnet_id}"
+  ssh_username = "${var.ssh_username}"
+  //   subnet_id     = "${var.subnet_id}"
 
   launch_block_device_mappings {
     delete_on_termination = true
@@ -68,18 +68,18 @@ build {
   sources = ["source.amazon-ebs.my-ami"]
 
   provisioner "file" {
-  source = "webapp.zip"
-  destination = "/home/admin/webapp.zip"
-}
+    source      = "webapp.zip"
+    destination = "/home/admin/webapp.zip"
+  }
 
   provisioner "file" {
-  source = "util/users.csv"
-  destination = "/home/admin/users.csv"
-}
+    source      = "util/users.csv"
+    destination = "/home/admin/users.csv"
+  }
 
   provisioner "shell" {
-  script       = "setup.sh"
-  pause_before = "10s"
-}
+    script       = "setup.sh"
+    pause_before = "10s"
+  }
 
 }
