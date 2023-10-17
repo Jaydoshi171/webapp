@@ -22,6 +22,12 @@ variable "maria_password" {
   default = "${env("MARIA_PASSWORD")}"
 }
 
+variable "mysql_db_name" {
+  type    = string
+  default = "${env("MYSQL_DB_NAME")}"
+}
+
+
 variable "source_ami" {
   type    = string
   default = "ami-06db4d78cb1d3bbf9" # Debian 12
@@ -91,9 +97,9 @@ build {
   provisioner "shell" {
     script = "setup.sh"
     environment_vars = [
-      "MARIA_PASSWORD=${env("MARIADB_PASSWORD")}",
-      "MYSQL_DB_NAME=${env("MYSQL_DB_NAME")}",
-      "MARIA_USER=${env("MARIADB_USER")}",
+      "MARIA_PASSWORD=${var.maria_password}",
+      "MYSQL_DB_NAME=${var.mysql_db_name}",
+      "MARIA_USER=${var.maria_user}",
     ]
     // pause_before = "10s"
   }
