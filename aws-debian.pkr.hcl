@@ -7,22 +7,22 @@ packer {
   }
 }
 
-variable "aws_region" {
+variable "AWS_AMI_REGION" {
   type    = string
   default = "${env("AWS_AMI_REGION")}"
 }
 
-variable "maria_user" {
+variable "MARIA_USER" {
   type    = string
   default = "${env("MARIA_USER")}"
 }
 
-variable "maria_password" {
+variable "MARIA_PASSWORD" {
   type    = string
   default = "${env("MARIA_PASSWORD")}"
 }
 
-variable "mysql_db_name" {
+variable "MYSQL_DB_NAME" {
   type    = string
   default = "${env("MYSQL_DB_NAME")}"
 }
@@ -45,7 +45,7 @@ variable "subnet_id" {
 
 # https://www.packer.io/plugins/builders/amazon/ebs
 source "amazon-ebs" "my-ami" {
-  region          = "${var.aws_region}"
+  region          = "${var.AWS_AMI_REGION}"
   ami_name        = "csye6225_${formatdate("YYYY_MM_DD_hh_mm_ss", timestamp())}"
   ami_description = "AMI for CSYE 6225"
   ami_regions = [
@@ -97,9 +97,9 @@ build {
   provisioner "shell" {
     script = "setup.sh"
     environment_vars = [
-      "MARIA_PASSWORD=${var.maria_password}",
-      "MYSQL_DB_NAME=${var.mysql_db_name}",
-      "MARIA_USER=${var.maria_user}",
+      "MARIA_PASSWORD=${var.MARIA_PASSWORD}",
+      "MYSQL_DB_NAME=${var.MYSQL_DB_NAME}",
+      "MARIA_USER=${var.MARIA_USER}",
     ]
     // pause_before = "10s"
   }
