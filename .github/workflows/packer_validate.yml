@@ -43,5 +43,8 @@ jobs:
       - name: Run Packer pulgin installation
         run: packer init .
 
-      - name: Validate Packer template
+      - name: Packer format checker
+        run: packer fmt -check aws-debian.pkr.hcl
+
+      - name: Validate Packer file
         run: packer validate aws-debian.pkr.hcl

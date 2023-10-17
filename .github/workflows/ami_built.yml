@@ -46,3 +46,9 @@ jobs:
 
       - name: Build ami with packer
         run: packer build aws-debian.pkr.hcl
+        env:
+          MARIADB_PASSWORD: ${{ secrets.PASSWORD }}
+          MYSQL_DB_NAME: ${{  secrets.DATABASE  }}
+          MARIADB_USER: ${{ secrets.USER }}
+          AWS_AMI_REGION: ${{ secrets.AWS_REGION }}
+
