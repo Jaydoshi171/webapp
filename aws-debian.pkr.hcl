@@ -79,7 +79,7 @@ build {
   }
 
   provisioner "shell" {
-    script       = "setup.sh"
+    script = "setup.sh"
     environment_vars = [
       "MARIA_PASSWORD=${env("MARIADB_PASSWORD")}",
       "MYSQL_DB_NAME=${env("MYSQL_DB_NAME")}",
