@@ -9,7 +9,7 @@ packer {
 
 variable "aws_region" {
   type    = string
-  default = env("AWS_AMI_REGION")
+  default = "${env("AWS_AMI_REGION")}"
 }
 
 variable "source_ami" {
