@@ -12,6 +12,16 @@ variable "aws_region" {
   default = "${env("AWS_AMI_REGION")}"
 }
 
+variable "maria_user" {
+  type    = string
+  default = "${env("MARIA_USER")}"
+}
+
+variable "maria_password" {
+  type    = string
+  default = "${env("MARIA_PASSWORD")}"
+}
+
 variable "source_ami" {
   type    = string
   default = "ami-06db4d78cb1d3bbf9" # Debian 12
