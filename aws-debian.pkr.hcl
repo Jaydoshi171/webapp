@@ -12,14 +12,14 @@ variable "AWS_AMI_REGION" {
   default = "${env("AWS_AMI_REGION")}"
 }
 
-variable "MARIA_USER" {
+variable "MARIADB_USER" {
   type    = string
-  default = "${env("MARIA_USER")}"
+  default = "${env("MARIADB_USER")}"
 }
 
-variable "MARIA_PASSWORD" {
+variable "MARIADB_PASSWORD" {
   type    = string
-  default = "${env("MARIA_PASSWORD")}"
+  default = "${env("MARIADB_PASSWORD")}"
 }
 
 variable "MYSQL_DB_NAME" {
@@ -97,9 +97,9 @@ build {
   provisioner "shell" {
     script = "setup.sh"
     environment_vars = [
-      "MARIA_PASSWORD=${var.MARIA_PASSWORD}",
+      "MARIA_PASSWORD=${var.MARIADB_PASSWORD}",
       "MYSQL_DB_NAME=${var.MYSQL_DB_NAME}",
-      "MARIA_USER=${var.MARIA_USER}",
+      "MARIA_USER=${var.MARIADB_USER}",
     ]
     // pause_before = "10s"
   }
