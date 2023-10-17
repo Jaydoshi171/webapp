@@ -9,7 +9,7 @@ packer {
 
 variable "aws_region" {
   type    = string
-  default = "us-east-1"
+  default = env("AWS_AMI_REGION")
 }
 
 variable "source_ami" {
@@ -44,14 +44,15 @@ source "amazon-ebs" "my-ami" {
   instance_type = "t2.micro"
   source_ami    = "${var.source_ami}"
   // source_ami_filter {
+  //   most_recent = true
   //   filters = {
-  //     name                = "debian-12-*"
+  //     name                = "debian-12-amd64*"
   //     architecture        = "x86_64"
+  //     root-device-name    = "/dev/xvda"
   //     root-device-type    = "ebs"
   //     virtualization-type = "hvm"
   //   }
-  //   most_recent = true
-  //   owners      = ["192072421737"]
+  //   owners = ["amazon"]
   // }
   ssh_username = "${var.ssh_username}"
   //   subnet_id     = "${var.subnet_id}"
@@ -79,7 +80,12 @@ build {
 
   provisioner "shell" {
     script       = "setup.sh"
-    pause_before = "10s"
+    environment_vars = [
+      "MARIA_PASSWORD=${env("MARIADB_PASSWORD")}",
+      "MYSQL_DB_NAME=${env("MYSQL_DB_NAME")}",
+      "MARIA_USER=${env("MARIADB_USER")}",
+    ]
+    // pause_before = "10s"
   }
 
 }
