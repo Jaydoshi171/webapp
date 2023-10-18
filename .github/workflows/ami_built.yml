@@ -45,5 +45,5 @@ jobs:
         run: zip -r webapp.zip .
 
       - name: Build ami with packer
-        run: packer build -var 'MARIADB_PASSWORD=${{ secrets.PASSWORD }}' -var 'MYSQL_DB_NAME=${{ secrets.DATABASE }}' -var 'MARIADB_USER=${{ secrets.USER }}' -var 'AWS_AMI_REGION=${{ secrets.AWS_REGION }}' aws-debian.pkr.hcl
+        run: packer build -var 'MARIADB_PASSWORD=${{ secrets.PASSWORD }}' -var 'MYSQL_DB_NAME=${{ secrets.DATABASE }}' -var 'MARIADB_USER=${{ secrets.USER }}' -var 'AWS_AMI_REGION=${{ secrets.AWS_REGION }}' -var-file="variables.pkrvars.hcl" aws-debian.pkr.hcl
 

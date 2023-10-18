@@ -4,9 +4,9 @@ sudo apt-get upgrade -y
 sudo apt install unzip
 sudo apt install nodejs npm -y
 sudo apt install mariadb-server -y
-echo "USER_PASSWORD: ${MARIA_PASSWORD}"
-echo "MYSQL_DB_NAME: ${MYSQL_DB_NAME}"
-echo "USER_PMYSQL_USERASSWORD: ${MYSQL_USER}"
+# echo "USER_PASSWORD: ${MARIA_PASSWORD}"
+# echo "MYSQL_DB_NAME: ${MYSQL_DB_NAME}"
+# echo "USER_PMYSQL_USERASSWORD: ${MYSQL_USER}"
 sudo mysql -e "SET PASSWORD FOR $MARIA_USER@localhost = PASSWORD('$MARIA_PASSWORD');FLUSH PRIVILEGES;"
 printf "%s\n n\n n\n n\n n\n n\n y\n" "$MARIA_PASSWORD" | sudo mysql_secure_installation
 mysql -u "$MARIA_USER" -p"$MARIA_PASSWORD" -Bse "CREATE DATABASE $MYSQL_DB_NAME;"

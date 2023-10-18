@@ -47,4 +47,4 @@ jobs:
         run: packer fmt -check aws-debian.pkr.hcl
 
       - name: Validate Packer file
-        run: packer validate aws-debian.pkr.hcl
+        run: packer validate -var 'MARIADB_PASSWORD=${{ secrets.PASSWORD }}' -var 'MYSQL_DB_NAME=${{ secrets.DATABASE }}' -var 'MARIADB_USER=${{ secrets.USER }}' -var 'AWS_AMI_REGION=${{ secrets.AWS_REGION }}' -var-file="variables.pkrvars.hcl" aws-debian.pkr.hcl
