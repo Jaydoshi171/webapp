@@ -149,12 +149,17 @@ variable "demo_account_id" {
   default = null
 }
 
+variable "share_aws_regions" {
+  type    = list(string)
+  default = null
+}
+
 # https://www.packer.io/plugins/builders/amazon/ebs
 source "amazon-ebs" "my-ami" {
   region          = "${var.AWS_AMI_REGION}"
   ami_name        = "${var.ami_name}${formatdate("${var.date_format}", timestamp())}"
   ami_description = "${var.ami_description}"
-  ami_regions     = ["${var.AWS_AMI_REGION}", ]
+  ami_regions     = "${var.share_aws_regions}"
   ami_users       = ["${var.dev_account_id}", "${var.demo_account_id}"]
 
   aws_polling {
