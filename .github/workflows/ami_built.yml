@@ -1,6 +1,8 @@
-name: Validate Packer file
+name: AMI Build
 
 on:
+  pull_request:
+    branches: [test]
   push:
     branches: [test]
 
