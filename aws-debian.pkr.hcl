@@ -154,8 +154,8 @@ source "amazon-ebs" "my-ami" {
   region          = "${var.AWS_AMI_REGION}"
   ami_name        = "${var.ami_name}${formatdate("${var.date_format}", timestamp())}"
   ami_description = "${var.ami_description}"
-  ami_regions = ["${var.AWS_AMI_REGION}",]
-  ami_users = ["${var.dev_account_id}", "${var.demo_account_id}"]
+  ami_regions     = ["${var.AWS_AMI_REGION}", ]
+  ami_users       = ["${var.dev_account_id}", "${var.demo_account_id}"]
 
   aws_polling {
     delay_seconds = "${var.delay_seconds}"
@@ -164,7 +164,7 @@ source "amazon-ebs" "my-ami" {
 
   instance_type = "${var.instance_type}"
   source_ami    = "${var.source_ami}"
-  ssh_username = "${var.ssh_username}"
+  ssh_username  = "${var.ssh_username}"
 
   launch_block_device_mappings {
     delete_on_termination = true
