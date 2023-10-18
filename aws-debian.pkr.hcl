@@ -27,57 +27,150 @@ variable "MYSQL_DB_NAME" {
   default = "${env("MYSQL_DB_NAME")}"
 }
 
-
-variable "source_ami" {
+variable "ami_description" {
   type    = string
-  default = "ami-06db4d78cb1d3bbf9" # Debian 12
+  default = null
 }
+
+variable "source_store_name" {
+  type    = string
+  default = null
+}
+
+variable "amazon_source_version" {
+  type    = string
+  default = null
+}
+
+variable "shell_setup_script" {
+  type    = string
+  default = null
+}
+
+variable "aws_region" {
+  type    = string
+  default = null
+}
+
+
+variable "max_attempts" {
+  type    = string
+  default = null
+}
+
 
 variable "ssh_username" {
   type    = string
-  default = "admin"
+  default = null
 }
 
-variable "subnet_id" {
+variable "amazon_source_name" {
   type    = string
-  default = "subnet-0e515761f4b2c66c1"
+  default = null
+}
+
+variable "zip_file_dest" {
+  type    = string
+  default = null
+}
+
+variable "date_format" {
+  type    = string
+  default = null
+}
+
+variable "csv_file_dest" {
+  type    = string
+  default = null
+}
+
+variable "volume_size" {
+  type    = string
+  default = null
+}
+
+variable "dev_account_id" {
+  type    = string
+  default = null
+}
+
+variable "ami_name" {
+  type    = string
+  default = null
+}
+
+variable "build_source" {
+  type    = string
+  default = null
+}
+
+variable "delay_seconds" {
+  type    = string
+  default = null
+}
+
+variable "source_ami" {
+  type    = string
+  default = null
+}
+
+variable "source_name" {
+  type    = string
+  default = null
+}
+
+variable "instance_type" {
+  type    = string
+  default = null
+}
+
+variable "volume_type" {
+  type    = string
+  default = null
+}
+
+variable "zip_file_src" {
+  type    = string
+  default = null
+}
+
+variable "device_name" {
+  type    = string
+  default = null
+}
+
+variable "csv_file_src" {
+  type    = string
+  default = null
+}
+
+variable "demo_account_id" {
+  type    = string
+  default = null
 }
 
 # https://www.packer.io/plugins/builders/amazon/ebs
 source "amazon-ebs" "my-ami" {
   region          = "${var.AWS_AMI_REGION}"
-  ami_name        = "csye6225_${formatdate("YYYY_MM_DD_hh_mm_ss", timestamp())}"
-  ami_description = "AMI for CSYE 6225"
-  ami_regions = [
-    "us-east-1",
-  ]
+  ami_name        = "${var.ami_name}${formatdate("${var.date_format}", timestamp())}"
+  ami_description = "${var.ami_description}"
+  ami_regions     = ["${var.AWS_AMI_REGION}", ]
+  ami_users       = ["${var.dev_account_id}", "${var.demo_account_id}"]
 
   aws_polling {
-    delay_seconds = 120
-    max_attempts  = 50
+    delay_seconds = "${var.delay_seconds}"
+    max_attempts  = "${var.max_attempts}"
   }
 
-  instance_type = "t2.micro"
+  instance_type = "${var.instance_type}"
   source_ami    = "${var.source_ami}"
-  // source_ami_filter {
-  //   most_recent = true
-  //   filters = {
-  //     name                = "debian-12-amd64*"
-  //     architecture        = "x86_64"
-  //     root-device-name    = "/dev/xvda"
-  //     root-device-type    = "ebs"
-  //     virtualization-type = "hvm"
-  //   }
-  //   owners = ["amazon"]
-  // }
-  ssh_username = "${var.ssh_username}"
-  //   subnet_id     = "${var.subnet_id}"
+  ssh_username  = "${var.ssh_username}"
 
   launch_block_device_mappings {
     delete_on_termination = true
-    device_name           = "/dev/xvda"
-    volume_size           = 8
-    volume_type           = "gp2"
+    device_name           = "${var.device_name}"
+    volume_size           = "${var.volume_size}"
+    volume_type           = "${var.volume_type}"
   }
 }
 
@@ -85,23 +178,21 @@ build {
   sources = ["source.amazon-ebs.my-ami"]
 
   provisioner "file" {
-    source      = "webapp.zip"
-    destination = "/home/admin/webapp.zip"
+    source      = "${var.zip_file_src}"
+    destination = "${var.zip_file_dest}"
   }
 
   provisioner "file" {
-    source      = "util/users.csv"
-    destination = "/home/admin/users.csv"
+    source      = "${var.csv_file_src}"
+    destination = "${var.csv_file_dest}"
   }
 
   provisioner "shell" {
-    script = "setup.sh"
+    script = "${var.shell_setup_script}"
     environment_vars = [
       "MARIA_PASSWORD=${var.MARIADB_PASSWORD}",
       "MYSQL_DB_NAME=${var.MYSQL_DB_NAME}",
       "MARIA_USER=${var.MARIADB_USER}",
     ]
-    // pause_before = "10s"
   }
-
 }
