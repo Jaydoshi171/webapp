@@ -3,6 +3,8 @@ name: Integration Test
 on:
   pull_request:
     branches: [test]
+  push:
+    branches: [test]
 
 jobs:
   connect-remote:
