@@ -2,10 +2,10 @@ name: AMI Build
 
 on:
   push:
-    branches: [test]
+    branches: [main]
 
 jobs:
-  validate-packer-file:
+  ami-build:
     runs-on: ubuntu-latest
 
     steps:
