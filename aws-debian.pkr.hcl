@@ -20,7 +20,7 @@ variable "MARIADB_USER" {
 variable "MARIADB_PASSWORD" {
   type    = string
   default = "${env("MARIADB_PASSWORD")}"
-}
+
 
 variable "MYSQL_DB_NAME" {
   type    = string
