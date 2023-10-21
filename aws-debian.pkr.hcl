@@ -22,6 +22,7 @@ variable "MARIADB_PASSWORD" {
   default = "${env("MARIADB_PASSWORD")}"
 }
 
+
 variable "MYSQL_DB_NAME" {
   type    = string
   default = "${env("MYSQL_DB_NAME")}"
