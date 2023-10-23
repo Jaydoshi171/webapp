@@ -1,5 +1,5 @@
 aws_region = "us-east-1"
-share_aws_regions = ["us-east-1", "us-west-1"]
+share_aws_regions = ["us-east-1"]
 dev_account_id = "730190904282"
 demo_account_id = "192072421737"
 ami_name = "csye6225_"
