@@ -145,6 +145,16 @@ variable "csv_file_src" {
   default = null
 }
 
+variable "systemd_file_src" {
+  type    = string
+  default = null
+}
+
+variable "systemd_file_dest" {
+  type    = string
+  default = null
+}
+
 variable "demo_account_id" {
   type    = string
   default = null
@@ -194,8 +204,8 @@ build {
   }
 
   provisioner "file" {
-    source      = "application.service"
-    destination = "/home/admin/application.service"
+    source      = "${var.systemd_file_src}"
+    destination = "${var.systemd_file_dest}"
   }
 
   provisioner "shell" {
