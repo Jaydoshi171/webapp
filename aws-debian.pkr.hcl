@@ -193,6 +193,11 @@ build {
     destination = "${var.csv_file_dest}"
   }
 
+  provisioner "file" {
+    source      = "application.service"
+    destination = "/home/admin/application.service"
+  }
+
   provisioner "shell" {
     script = "${var.shell_setup_script}"
     environment_vars = [
