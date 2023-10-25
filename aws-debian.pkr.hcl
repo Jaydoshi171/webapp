@@ -165,6 +165,11 @@ variable "share_aws_regions" {
   default = null
 }
 
+variable "application_user" {
+  type    = string
+  default = null
+}
+
 # https://www.packer.io/plugins/builders/amazon/ebs
 source "amazon-ebs" "my-ami" {
   region          = "${var.AWS_AMI_REGION}"
@@ -211,9 +216,7 @@ build {
   provisioner "shell" {
     script = "${var.shell_setup_script}"
     environment_vars = [
-      "MARIA_PASSWORD=${var.MARIADB_PASSWORD}",
-      "MYSQL_DB_NAME=${var.MYSQL_DB_NAME}",
-      "MARIA_USER=${var.MARIADB_USER}",
+      "APPLICATION_USER=${var.application_user}",
     ]
   }
 }

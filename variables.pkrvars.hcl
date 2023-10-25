@@ -23,5 +23,6 @@ systemd_file_dest = "/home/admin/application.service"
 shell_setup_script = "setup.sh"
 delay_seconds = 120
 max_attempts  = 50
+application_user = "csye6225"
 
 
