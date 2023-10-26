@@ -145,6 +145,16 @@ variable "csv_file_src" {
   default = null
 }
 
+variable "systemd_file_src" {
+  type    = string
+  default = null
+}
+
+variable "systemd_file_dest" {
+  type    = string
+  default = null
+}
+
 variable "demo_account_id" {
   type    = string
   default = null
@@ -152,6 +162,11 @@ variable "demo_account_id" {
 
 variable "share_aws_regions" {
   type    = list(string)
+  default = null
+}
+
+variable "application_user" {
+  type    = string
   default = null
 }
 
@@ -194,16 +209,14 @@ build {
   }
 
   provisioner "file" {
-    source      = "application.service"
-    destination = "/home/admin/application.service"
+    source      = "${var.systemd_file_src}"
+    destination = "${var.systemd_file_dest}"
   }
 
   provisioner "shell" {
     script = "${var.shell_setup_script}"
     environment_vars = [
-      "MARIA_PASSWORD=${var.MARIADB_PASSWORD}",
-      "MYSQL_DB_NAME=${var.MYSQL_DB_NAME}",
-      "MARIA_USER=${var.MARIADB_USER}",
+      "APPLICATION_USER=${var.application_user}",
     ]
   }
 }

@@ -6,7 +6,7 @@ const Account = require("../models/Account");
 async function populateDatabase() {
     try {
         await sequelize.sync({ alter: true });
-        const data = fs.readFileSync('/home/admin/opt/users.csv', 'utf8');
+        const data = fs.readFileSync('/opt/csye6225/users.csv', 'utf8');
         let temp = 0
         for(let row of data.split("\n")){
             console.log(row);

@@ -4,10 +4,12 @@ sudo apt-get upgrade -y
 sudo apt install unzip
 sudo apt install nodejs npm -y
 
-sudo mkdir opt
-sudo mv /home/admin/webapp.zip /home/admin/opt/webapp.zip
-sudo mv /home/admin/users.csv /home/admin/opt/users.csv
-cd opt
+sudo groupadd "$APPLICATION_USER"
+sudo useradd -s /bin/false -g "$APPLICATION_USER" -d "/opt/$APPLICATION_USER" -m "$APPLICATION_USER"
+# sudo mkdir opt
+sudo mv /home/admin/webapp.zip "/opt/$APPLICATION_USER/webapp.zip"
+sudo mv /home/admin/users.csv "/opt/$APPLICATION_USER/users.csv"
+cd "/opt/$APPLICATION_USER"
 sudo unzip -o webapp.zip
 sudo npm i
 
