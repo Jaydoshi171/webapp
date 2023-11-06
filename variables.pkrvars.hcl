@@ -24,5 +24,7 @@ shell_setup_script = "setup.sh"
 delay_seconds = 120
 max_attempts  = 50
 application_user = "csye6225"
+cloudwatch_config_src = "config.json"
+cloudwatch_config_dest = "/home/admin/config.json"
 
 

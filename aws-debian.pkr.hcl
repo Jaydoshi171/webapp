@@ -170,6 +170,16 @@ variable "application_user" {
   default = null
 }
 
+variable "cloudwatch_config_src" {
+  type    = string
+  default = null
+}
+
+variable "cloudwatch_config_dest" {
+  type    = string
+  default = null
+}
+
 # https://www.packer.io/plugins/builders/amazon/ebs
 source "amazon-ebs" "my-ami" {
   region          = "${var.AWS_AMI_REGION}"
@@ -211,6 +221,11 @@ build {
   provisioner "file" {
     source      = "${var.systemd_file_src}"
     destination = "${var.systemd_file_dest}"
+  }
+
+  provisioner "file" {
+    source      = "${var.cloudwatch_config_src}"
+    destination = "${var.cloudwatch_config_dest}"
   }
 
   provisioner "shell" {
