@@ -41,7 +41,7 @@ const createAssignment = async (req,res) => {
             deadline: deadline,
             createdBy: createdBy
         });
-        logger.info("New assignment created by user: " , createdBy);
+        logger.info("New assignment created by user: " + createdBy);
         return res.status(201).json(new_assignment).send();
     }
     catch(error){
@@ -59,7 +59,7 @@ const getAssignment = async (req,res) => {
         }
         const assignment = await Assignments.findOne({where: {id: id}});
         if(!assignment){
-            logger.error("No assignment with id: " , id);
+            logger.error("No assignment with id: " + id);
             return res.status(404).json({error: 'id not found'}).send();
         }
         return res.status(200).json(assignment).send();
@@ -75,7 +75,7 @@ const deleteAssignment = async (req,res) => {
         const id = req.params.id;
         const assignment = await Assignments.findOne({where: {id: id}});
         if(!assignment){
-            logger.error("No assignment with id: " , id);
+            logger.error("No assignment with id: " + id);
             return res.status(404).json({error: 'id not found'}).send();
         }
         if(assignment.createdBy!=req.account.email){
@@ -83,7 +83,7 @@ const deleteAssignment = async (req,res) => {
             return res.status(403).json({error: 'Forbidden'}).send();
         }
         await assignment.destroy();
-        logger.info("Assignment deleted for assignment id: " , id);
+        logger.info("Assignment deleted for assignment id: " + id);
         return res.status(204).send();
     }
     catch(error){
@@ -109,7 +109,7 @@ const updateAssignment = async (req,res) => {
             return res.status(404).json({error: 'id not found'}).send();
         }
         if(assignment.createdBy!=req.account.email){
-            logger.error("Forbidden update action by User: " , req.account.email);
+            logger.error("Forbidden update action by User: " + req.account.email);
             return res.status(403).json({error: 'Forbidden'}).send();
         }
         assignment.name = name;
@@ -117,7 +117,7 @@ const updateAssignment = async (req,res) => {
         assignment.num_of_attempts = num_of_attempts;
         assignment.deadline = deadline;
         await assignment.save();
-        logger.info("Assignment updated for assignment id: " , id);
+        logger.info("Assignment updated for assignment id: " + id);
         return res.status(204).send(); 
     }
     catch(error){
