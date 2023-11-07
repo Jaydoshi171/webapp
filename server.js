@@ -9,12 +9,13 @@ const sequelize = require('./util/config')
 const Account = require('./models/Account')
 const populateData = require('./util/populateDB');
 const auth = require('./controllers/authentication');
+const bodyParserErrorHandler = require('express-body-parser-error-handler')
 
 app.use(bodyParser.json());
 
 app.use(express.json());
 app.use(express.urlencoded());
-
+app.use(bodyParserErrorHandler());
 app.use('',require('./routes/assignment_routes'));
 
 app.get('/healthz',async (req, res) => {
@@ -28,12 +29,9 @@ app.get('/healthz',async (req, res) => {
         }
         else{
             await sequelize.authenticate();
-            // const password = "Jay@1998"
-            // const email = "jaydoshi171@gmail.com";
             res.setHeader('Cache-control','no-cache, no-store, must-revalidate');
             res.setHeader('Pragma','no-cache');
             res.setHeader('X-Content-Type-Options','nosniff');
-            // res.setHeader('Authorization', 'Basic ' + base64.encode(email + ":" + password))
             res.status(200).send();
         }
        
