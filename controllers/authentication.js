@@ -4,6 +4,10 @@ const Account = require('../models/Account')
 const logger = require("../util/logger");
 
 async function basicAuth(req, res, next) {
+    // if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
+    //     // console.error(err);
+    //     return res.status(400).send({ status: 404}); // Bad request
+    // }
     try{
         await sequelize.authenticate();
     }
@@ -13,6 +17,8 @@ async function basicAuth(req, res, next) {
     }
     // console.log("req.headers.authorization "+req.headers.authorization)
     // console.log("1 " +req.headers)
+    
+
     if (!req.headers.authorization || req.headers.authorization.indexOf('Basic ') === -1) {
         return res.status(401).json({ message: 'Missing Authorization Header' }).send();
     }
