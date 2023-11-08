@@ -17,7 +17,6 @@ async function basicAuth(req, res, next) {
     }
     // console.log("req.headers.authorization "+req.headers.authorization)
     // console.log("1 " +req.headers)
-    
 
     if (!req.headers.authorization || req.headers.authorization.indexOf('Basic ') === -1) {
         return res.status(401).json({ message: 'Missing Authorization Header' }).send();
