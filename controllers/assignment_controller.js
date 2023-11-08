@@ -21,6 +21,11 @@ const getAllAssignments = async (req,res) => {
         return res.status(400).json({error: 'Bad Request'}).send();
     }
 }
+function checkDate(input) {
+    let regex = /[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]+)?([Zz]|([\+-])([01]\d|2[0-3]):?([0-5]\d)?)?/i;
+    return regex.test(input);
+}
+
 const createAssignment = async (req,res) => {
     
     try{
@@ -30,6 +35,19 @@ const createAssignment = async (req,res) => {
         const num_of_attempts = req.body.num_of_attempts;
         const deadline = req.body.deadline;
         const createdBy = req.account.email;
+        const date = new Date(deadline);
+        if(!Number.isInteger(points) || !Number.isInteger(num_of_attempts)){
+            logger.error("Bad request: Invalid body parameters");
+            return res.status(400).json({error: 'Bad Request'}).send();
+        }
+        if (!(typeof name === 'string' || name instanceof String)){
+            logger.error("Bad request: Invalid body parameters");
+            return res.status(400).json({error: 'Bad Request'}).send();
+        }
+        if(!checkDate(deadline)){
+            logger.error("Bad request: Invalid body parameters");
+            return res.status(400).json({error: 'Bad Request'}).send();
+        }
         if(!name || !points || !num_of_attempts || !deadline || !createdBy || Object.keys(req.body).length > 4){
             logger.error("Bad request: Invalid body parameters");
             return res.status(400).json({error: 'Bad Request'}).send();
@@ -99,6 +117,18 @@ const updateAssignment = async (req,res) => {
         const points = req.body.points;
         const num_of_attempts = req.body.num_of_attempts;
         const deadline = req.body.deadline;
+        if(!Number.isInteger(points) || !Number.isInteger(num_of_attempts)){
+            logger.error("Bad request: Invalid body parameters");
+            return res.status(400).json({error: 'Bad Request'}).send();
+        }
+        if (!(typeof name === 'string' || name instanceof String)){
+            logger.error("Bad request: Invalid body parameters");
+            return res.status(400).json({error: 'Bad Request'}).send();
+        }
+        if(!checkDate(deadline)){
+            logger.error("Bad request: Invalid body parameters");
+            return res.status(400).json({error: 'Bad Request'}).send();
+        }
         if(!name || !points || !num_of_attempts || !deadline || Object.keys(req.body).length > 4 ){
             logger.error("Bad request: Invalid body parameters");
             return res.status(400).json({error: 'Bad Request'}).send();
