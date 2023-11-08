@@ -6,7 +6,6 @@ sudo apt install nodejs npm -y
 
 sudo groupadd "$APPLICATION_USER"
 sudo useradd -s /bin/false -g "$APPLICATION_USER" -d "/opt/$APPLICATION_USER" -m "$APPLICATION_USER"
-# sudo mkdir opt
 sudo mv /home/admin/webapp.zip "/opt/$APPLICATION_USER/webapp.zip"
 sudo mv /home/admin/users.csv "/opt/$APPLICATION_USER/users.csv"
 sudo mv /home/admin/config.json "/opt/$APPLICATION_USER/config.json"

@@ -1,6 +1,5 @@
 const express = require('express');
 const assignmentController = require('../controllers/assignment_controller');
-// import * as auth from '../controllers/authentication';
 const auth = require('../controllers/authentication');
 
 const router = express.Router();
