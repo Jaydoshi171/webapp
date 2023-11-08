@@ -10,6 +10,9 @@ const Account = require('./models/Account')
 const populateData = require('./util/populateDB');
 const auth = require('./controllers/authentication');
 const bodyParserErrorHandler = require('express-body-parser-error-handler')
+const logger = require("./util/logger");
+const StatsD =  require("node-statsd");
+const statsd = new StatsD({ host: "localhost", port: 8125 });
 
 app.use(bodyParser.json());
 
@@ -20,8 +23,10 @@ app.use('',require('./routes/assignment_routes'));
 
 app.get('/healthz',async (req, res) => {
     try {
+        statsd.increment("endpoint.get.healthCheck");
         const url_params = url.parse(req.url, true);
         if ((req.body && Object.keys(req.body).length > 0) || (Object.keys(url_params.query).length > 0)){
+            logger.error("Invalid health check request");
             res.setHeader('Cache-control','no-cache, no-store, must-revalidate');
             res.setHeader('Pragma','no-cache');
             res.setHeader('X-Content-Type-Options','nosniff');
@@ -29,6 +34,7 @@ app.get('/healthz',async (req, res) => {
         }
         else{
             await sequelize.authenticate();
+            logger.info("Health check Successful");
             res.setHeader('Cache-control','no-cache, no-store, must-revalidate');
             res.setHeader('Pragma','no-cache');
             res.setHeader('X-Content-Type-Options','nosniff');
@@ -36,6 +42,7 @@ app.get('/healthz',async (req, res) => {
         }
        
     } catch (error) {
+        logger.error("Database not connected");
         res.setHeader('Cache-control','no-cache, no-store, must-revalidate');
         res.setHeader('Pragma','no-cache');
         res.setHeader('X-Content-Type-Options','nosniff');
