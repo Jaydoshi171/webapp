@@ -96,4 +96,4 @@ Step 1: Clone the repository or download and unzip the source repository.
 Step 2: Create appropriate files in the IDE and write the code.
 Step 3: Download the node modules and install dependencies. Start Server through command npm start. Open Postman to Test the API's.
 Step 4: Check the Database after each and every API is called to see the status in Database.
-Step 5: Verify the status codes returned by API as per requirements. 
+Step 5: Verify the status codes returned by API as per requirements.  
