@@ -11,6 +11,10 @@ sudo mv /home/admin/users.csv "/opt/$APPLICATION_USER/users.csv"
 sudo mv /home/admin/config.json "/opt/$APPLICATION_USER/config.json"
 cd "/opt/$APPLICATION_USER"
 sudo unzip -o webapp.zip
+sudo chown -R "$APPLICATION_USER" "/opt/$APPLICATION_USER"
+sudo chgrp -R "$APPLICATION_USER" "/opt/$APPLICATION_USER"
+sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c "file:/opt/$APPLICATION_USER/config.json" -s
+cd "/opt/$APPLICATION_USER"
 sudo npm i
 
 sudo cp /home/admin/application.service /etc/systemd/system/
