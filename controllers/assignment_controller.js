@@ -1,9 +1,11 @@
 const sequelize = require('../util/config')
 const Account = require('../models/Account')
 const Assignments = require('../models/Assignments')
+const Submission = require('../models/Submission')
 const logger = require("../util/logger");
 const StatsD =  require("node-statsd");
 const statsd = new StatsD({ host: "localhost", port: 8125 });
+const AWS = require('aws-sdk');
 
 const getAllAssignments = async (req,res) => {
     try{
@@ -158,6 +160,78 @@ const updateAssignment = async (req,res) => {
     }
 }
 
+const postSubmission = async (req,res) => {
+    try{
+        statsd.increment("endpoint.post.submission");
+        const id = req.params.id;
+        const assignment = await Assignments.findOne({where: {id: id}});
+        const sub_url = req.body.submission_url;
+        if (!(typeof sub_url === 'string' || sub_url instanceof String)){
+            logger.warn("Bad put request because of bad request body in updateAssignment function");
+            return res.status(400).json({error: 'Bad Request ejbkwjefb'}).send();
+        }
+        if(!sub_url || Object.keys(req.body).length > 1 ){
+            logger.warn("Bad put request because of bad request body in updateAssignment function");
+            return res.status(400).json({error: 'Bad Request whefwjhbfjw'}).send();
+        }
+        if(!assignment){
+            logger.warn("No assignment found in getAssignment function with id: " + id);
+            return res.status(404).json({error: 'id not found'}).send();
+        }
+        const submission = await Submission.findOne({where: {account_id: req.account.id, assignment_id: assignment.id}});
+        if(!submission){
+            const new_submission = await Submission.create({
+                assignment_id: assignment.id,
+                submission_url: sub_url,
+                account_id: req.account.id,
+                num_of_submissions: 1,
+            });
+            console.log(new_submission)
+        }
+        else{
+            if(submission.num_of_submissions>=assignment.num_of_attempts){
+                logger.warn("Forbidden!! You have exhausted total number of submissions");
+                return res.status(403).json({error: '"Forbidden!! You have exhausted total number of submissions"'}).send();
+            }
+            submission.num_of_submissions+=1
+            submission.submission_url = sub_url
+            await submission.save()
+        }
+        console.log(submission)
+        AWS.config.update({ region: 'us-east-1' });
+        const sns = new AWS.SNS();
+        const topicArn = 'arn:aws:sns:us-east-1:192072421737:submitAssinment';
+        const userInfo = {
+            email: 'user@example.com',
+            // Add other user information as needed
+        };
+        const url = 'https://example.com';
+        // Message to be sent
+        const message = {
+            userInfo,
+            url,
+        };
+        sns.publish({
+            TopicArn: topicArn,
+            Message: JSON.stringify(message),
+        }, (err, data) => {
+            if (err) {
+                console.error('Error publishing message to SNS:', err);
+            } else {
+                console.log('Message published successfully:', data);
+            }
+        });
+        
+        console.log("In the function as needed")
+        logger.info("Assignment updated in updateAssignment function for assignment id: " + id);
+        return res.status(204).send(); 
+    }
+    catch(error){
+        logger.error(`Error in updateAssignment function: ${error.message}`);
+        return res.status(400).json({error: 'Bad Request'}).send();
+    }
+}
+
 const patch1 = async (req,res) => {
     try{
         return res.status(405).send();
@@ -175,4 +249,4 @@ const patch2 = async (req,res) => {
     }
 }
 
-module.exports = {getAllAssignments, createAssignment, getAssignment, deleteAssignment, updateAssignment,patch1,patch2}
+module.exports = {getAllAssignments, createAssignment, getAssignment, deleteAssignment, updateAssignment,patch1,patch2,postSubmission}
