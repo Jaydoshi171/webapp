@@ -6,6 +6,8 @@ const logger = require("../util/logger");
 const StatsD =  require("node-statsd");
 const statsd = new StatsD({ host: "localhost", port: 8125 });
 const AWS = require('aws-sdk');
+const env = require('dotenv');
+env.config();
 
 const getAllAssignments = async (req,res) => {
     try{
@@ -198,18 +200,12 @@ const postSubmission = async (req,res) => {
             await submission.save()
         }
         console.log(submission)
-        AWS.config.update({ region: 'us-east-1' });
+        AWS.config.update({ region: process.env.aws_region });
         const sns = new AWS.SNS();
-        const topicArn = 'arn:aws:sns:us-east-1:192072421737:submitAssinment';
-        const userInfo = {
-            email: 'user@example.com',
-            // Add other user information as needed
-        };
-        const url = 'https://example.com';
-        // Message to be sent
+        const topicArn = process.env.sns_topic_arn;
         const message = {
-            userInfo,
-            url,
+            email: req.account.email,
+            sub_url: sub_url,
         };
         sns.publish({
             TopicArn: topicArn,
