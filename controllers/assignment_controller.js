@@ -9,6 +9,7 @@ const AWS = require('aws-sdk');
 const env = require('dotenv');
 env.config();
 
+
 const getAllAssignments = async (req,res) => {
     try{
         statsd.increment("endpoint.get.allAssignment");
