@@ -7,6 +7,7 @@ const StatsD =  require("node-statsd");
 const statsd = new StatsD({ host: "localhost", port: 8125 });
 const AWS = require('aws-sdk');
 const env = require('dotenv');
+const validator = require('validator');
 env.config();
 
 
@@ -103,6 +104,11 @@ const deleteAssignment = async (req,res) => {
             logger.warn("No assignment found in getAssignment function with id: " + id);
             return res.status(404).json({error: 'id not found'}).send();
         }
+        const { count, submissions } = await Submission.findAndCountAll({where: {assignment_id: assignment.id}});
+        if (count > 0) {
+            logger.warn("Forbidden delete action in deleteAssignment function because it assignment has submissions by User: " , req.account.email);
+            return res.status(403).json({error: 'Forbidden'}).send();
+        }
         if(assignment.createdBy!=req.account.email){
             logger.warn("Forbidden delete action in deleteAssignment function by User: " , req.account.email);
             return res.status(403).json({error: 'Forbidden'}).send();
@@ -171,29 +177,38 @@ const postSubmission = async (req,res) => {
         const sub_url = req.body.submission_url;
         if (!(typeof sub_url === 'string' || sub_url instanceof String)){
             logger.warn("Bad put request because of bad request body in postSubmission function");
-            return res.status(400).json({error: 'Bad Request ejbkwjefb'}).send();
+            return res.status(400).json({error: 'Bad Request'}).send();
         }
         if(!sub_url || Object.keys(req.body).length > 1 ){
             logger.warn("Bad put request because of bad request body in postSubmission function");
-            return res.status(400).json({error: 'Bad Request whefwjhbfjw'}).send();
+            return res.status(400).json({error: 'Bad Request'}).send();
+        }
+        if (!validator.isURL(sub_url)) {
+            logger.warn("Bad put request because of invalid URL in postSubmission function");
+            return res.status(400).json({error: 'Bad Request'}).send();
+        }
+        const currDate = new Date();
+        if (currDate > assignment.deadline) {
+            logger.warn("Forbidden!! Its past deadline");
+            return res.status(403).json({error: "Forbidden!! Its post deadline"}).send();
         }
         if(!assignment){
             logger.warn("No assignment found in postSubmission function with id: " + id);
             return res.status(404).json({error: 'id not found'}).send();
         }
         const { count, submissions } = await Submission.findAndCountAll({where: {account_id: req.account.id, assignment_id: assignment.id}});
-        if(count < assignment.num_of_attempts){
-            const new_submission = await Submission.create({
-                assignment_id: assignment.id,
-                submission_url: sub_url,
-                account_id: req.account.id,
-            });
-            console.log(new_submission)
-        }
-        else{
+        if(count >= assignment.num_of_attempts){
             logger.warn("Forbidden!! You have exhausted total number of submissions");
             return res.status(403).json({error: '"Forbidden!! You have exhausted total number of submissions"'}).send();
         }
+
+        const new_submission = await Submission.create({
+            assignment_id: assignment.id,
+            submission_url: sub_url,
+            account_id: req.account.id,
+        });
+        console.log(new_submission)
+
         AWS.config.update({ region: process.env.aws_region });
         const sns = new AWS.SNS();
         const topicArn = process.env.sns_topic_arn;
@@ -221,7 +236,7 @@ const postSubmission = async (req,res) => {
         
         console.log("In the function as needed")
         logger.info("Submission submitted successfully in postSubmission function");
-        return res.status(201).send(); 
+        return res.status(201).json(new_submission).send(); 
     }
     catch(error){
         logger.error(`Error in updateAssignment function: ${error.message}`);
