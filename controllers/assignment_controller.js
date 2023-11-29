@@ -208,7 +208,6 @@ const postSubmission = async (req,res) => {
             account_id: req.account.id,
         });
         console.log(new_submission)
-
         AWS.config.update({ region: process.env.aws_region });
         const sns = new AWS.SNS();
         const topicArn = process.env.sns_topic_arn;
