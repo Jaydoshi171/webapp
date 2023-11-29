@@ -170,43 +170,40 @@ const postSubmission = async (req,res) => {
         const assignment = await Assignments.findOne({where: {id: id}});
         const sub_url = req.body.submission_url;
         if (!(typeof sub_url === 'string' || sub_url instanceof String)){
-            logger.warn("Bad put request because of bad request body in updateAssignment function");
+            logger.warn("Bad put request because of bad request body in postSubmission function");
             return res.status(400).json({error: 'Bad Request ejbkwjefb'}).send();
         }
         if(!sub_url || Object.keys(req.body).length > 1 ){
-            logger.warn("Bad put request because of bad request body in updateAssignment function");
+            logger.warn("Bad put request because of bad request body in postSubmission function");
             return res.status(400).json({error: 'Bad Request whefwjhbfjw'}).send();
         }
         if(!assignment){
-            logger.warn("No assignment found in getAssignment function with id: " + id);
+            logger.warn("No assignment found in postSubmission function with id: " + id);
             return res.status(404).json({error: 'id not found'}).send();
         }
-        const submission = await Submission.findOne({where: {account_id: req.account.id, assignment_id: assignment.id}});
-        if(!submission){
+        const { count, submissions } = await Submission.findAndCountAll({where: {account_id: req.account.id, assignment_id: assignment.id}});
+        if(count < assignment.num_of_attempts){
             const new_submission = await Submission.create({
                 assignment_id: assignment.id,
                 submission_url: sub_url,
                 account_id: req.account.id,
-                num_of_submissions: 1,
             });
             console.log(new_submission)
         }
         else{
-            if(submission.num_of_submissions>=assignment.num_of_attempts){
-                logger.warn("Forbidden!! You have exhausted total number of submissions");
-                return res.status(403).json({error: '"Forbidden!! You have exhausted total number of submissions"'}).send();
-            }
-            submission.num_of_submissions+=1
-            submission.submission_url = sub_url
-            await submission.save()
+            logger.warn("Forbidden!! You have exhausted total number of submissions");
+            return res.status(403).json({error: '"Forbidden!! You have exhausted total number of submissions"'}).send();
         }
-        console.log(submission)
         AWS.config.update({ region: process.env.aws_region });
         const sns = new AWS.SNS();
         const topicArn = process.env.sns_topic_arn;
+        const num_attempts = count+1;
         const message = {
             email: req.account.email,
             sub_url: sub_url,
+            num_attempts: num_attempts,
+            assignment_id: assignment.id,
+            assignment_name: assignment.name
         };
         sns.publish({
             TopicArn: topicArn,
@@ -214,14 +211,17 @@ const postSubmission = async (req,res) => {
         }, (err, data) => {
             if (err) {
                 console.error('Error publishing message to SNS:', err);
+                logger.warn('Error publishing message to SNS:', err);
+                return res.status(400).json({error: 'Bad Request'}).send();
             } else {
                 console.log('Message published successfully:', data);
+                logger.info('Message published successfully:', data);
             }
         });
         
         console.log("In the function as needed")
-        logger.info("Assignment updated in updateAssignment function for assignment id: " + id);
-        return res.status(204).send(); 
+        logger.info("Submission submitted successfully in postSubmission function");
+        return res.status(201).send(); 
     }
     catch(error){
         logger.error(`Error in updateAssignment function: ${error.message}`);

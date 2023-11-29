@@ -19,20 +19,7 @@ const Submission = sequelize.define('Submission', {
         type: DataTypes.STRING,
         allowNull: false
     },
-    num_of_submissions: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-    // submission_date: {
-    //   type: DataTypes.DATE,
-    //   allowNull: false
-    // },
-    // assignment_updated: {
-    //     type: DataTypes.DATE,
-    //     allowNull: false
-    // },
   },{
-    // tableName: 'Assignments',
     createdAt:'submission_date',
     updatedAt: 'assignment_updated',
   });
