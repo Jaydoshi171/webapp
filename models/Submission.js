@@ -21,7 +21,7 @@ const Submission = sequelize.define('Submission', {
     },
   },{
     createdAt:'submission_date',
-    updatedAt: 'assignment_updated',
+    updatedAt: 'submission_updated',
   });
 
 (async () => {
