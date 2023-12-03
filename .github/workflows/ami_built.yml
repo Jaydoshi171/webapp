@@ -37,3 +37,27 @@ jobs:
       - name: Build ami with packer
         run: packer build -var 'MARIADB_PASSWORD=${{ secrets.PASSWORD }}' -var 'MYSQL_DB_NAME=${{ secrets.DATABASE }}' -var 'MARIADB_USER=${{ secrets.USER }}' -var 'AWS_AMI_REGION=${{ secrets.AWS_REGION }}' -var-file="variables.pkrvars.hcl" aws-debian.pkr.hcl
 
+      - name: Get Ami Id
+        run: |
+          echo AMI_ID=$(jq -r '.builds[-1].artifact_id' ./manifest.json | cut -d ":" -f2) >> $GITHUB_ENV
+        shell: bash
+
+      - name: create launch template version
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_DEMO_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_DEMO_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+
+        run: |
+          aws ec2 create-launch-template-version --launch-template-name csye6225-instance-20231203230020789000000003 --source-version 1 --launch-template-data '{"ImageId":"${{ env.AMI_ID }}"}'
+          echo "Launch template ID completed"
+
+      - name: Instance refresh auto scale to use new launch template version
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.DEMO_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.DEMO_SECRET_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+        run: |
+          aws autoscaling start-instance-refresh --auto-scaling-group-name cloud-auto-scaling-group-25d7dd0
+          echo "Instance refresh for Launch template ID in AS completed"
+
