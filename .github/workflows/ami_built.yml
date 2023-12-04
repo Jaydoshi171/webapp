@@ -66,10 +66,10 @@ jobs:
             # Check if the status is "Successful" or "Failed"
             if [ "$status" == "Successful" ] || [ "$status" == "Failed" ]; then
               echo "Instance refresh completed with status: $status"
-              exit 0
+              exit 1
             else
               echo "Instance refresh is still in progress. Current status: $status"
-              return 1
+              return 0
             fi
           }
           # Wait for the instance refresh to complete
