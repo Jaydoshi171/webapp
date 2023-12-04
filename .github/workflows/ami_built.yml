@@ -59,22 +59,28 @@ jobs:
           AWS_REGION: ${{ secrets.AWS_REGION }}
         run: |
           aws autoscaling start-instance-refresh --auto-scaling-group-name cloud-auto-scaling-group
-          echo "Instance refresh for Launch template ID in AS completed"
           check_instance_refresh_status() {
             status=$(aws autoscaling describe-instance-refreshes --auto-scaling-group-name cloud-auto-scaling-group --query 'InstanceRefreshes[0].Status' --output text)
-            
-            # Check if the status is "Successful" or "Failed"
             if [ "$status" == "Successful" ] || [ "$status" == "Failed" ]; then
-              echo "Instance refresh completed with status: $status"
               exit 1
             else
-              echo "Instance refresh is still in progress. Current status: $status"
               return 0
             fi
           }
+
           # Wait for the instance refresh to complete
           while check_instance_refresh_status; do
               sleep 30  # You can adjust the sleep interval as needed
-              echo "Waiting For refresh to get completed"
+              echo "Waiting for auto scaling group to refresh"
           done
+          
+          status1=$(aws autoscaling describe-instance-refreshes --auto-scaling-group-name cloud-auto-scaling-group --query 'InstanceRefreshes[0].Status' --output text)
+          if [ "$status1" == "Failed" ]; then
+              echo "Instance refresh failed"
+              exit 1
+            else
+              echo "Instance refresh completed successfully"
+              exit 0
+            fi
+
 
