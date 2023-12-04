@@ -49,7 +49,7 @@ jobs:
           AWS_REGION: ${{ secrets.AWS_REGION }}
 
         run: |
-          aws ec2 create-launch-template-version --launch-template-name csye6225-instance-20231203230020789000000003 --source-version 1 --launch-template-data '{"ImageId":"${{ env.AMI_ID }}"}'
+          aws ec2 create-launch-template-version --launch-template-name csye6225-instance-20231204064518217000000003 --source-version 1 --launch-template-data '{"ImageId":"${{ env.AMI_ID }}"}'
           echo "Launch template ID completed"
 
       - name: Instance refresh auto scale to use new launch template version
@@ -58,6 +58,23 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_DEMO_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
         run: |
-          aws autoscaling start-instance-refresh --auto-scaling-group-name cloud-auto-scaling-group-25d7dd0
+          aws autoscaling start-instance-refresh --auto-scaling-group-name cloud-auto-scaling-group
           echo "Instance refresh for Launch template ID in AS completed"
+          check_instance_refresh_status() {
+            status=$(aws autoscaling describe-instance-refreshes --auto-scaling-group-name cloud-auto-scaling-group --query 'InstanceRefreshes[0].Status' --output text)
+            
+            # Check if the status is "Successful" or "Failed"
+            if [ "$status" == "Successful" ] || [ "$status" == "Failed" ]; then
+              echo "Instance refresh completed with status: $status"
+              exit 0
+            else
+              echo "Instance refresh is still in progress. Current status: $status"
+              return 1
+            fi
+          }
+          # Wait for the instance refresh to complete
+          while check_instance_refresh_status; do
+              sleep 30  # You can adjust the sleep interval as needed
+              echo "Waiting For refresh to get completed"
+          done
 
