@@ -62,7 +62,7 @@ jobs:
           check_instance_refresh_status() {
             status=$(aws autoscaling describe-instance-refreshes --auto-scaling-group-name cloud-auto-scaling-group --query 'InstanceRefreshes[0].Status' --output text)
             if [ "$status" == "Successful" ] || [ "$status" == "Failed" ]; then
-              exit 1
+              return 1
             else
               return 0
             fi
@@ -75,6 +75,17 @@ jobs:
           done
           
           status1=$(aws autoscaling describe-instance-refreshes --auto-scaling-group-name cloud-auto-scaling-group --query 'InstanceRefreshes[0].Status' --output text)
+          if [ "$status1" == "Failed" ]; then
+              echo "Instance refresh failed"
+              exit 1
+            else
+              echo "Instance refresh completed successfully"
+              exit 0
+            fi
+
+
+          status1=$(aws autoscaling describe-instance-refreshes --auto-scaling-group-name cloud-auto-scaling-group --query 'InstanceRefreshes[0].Status' --output text)
+          echo $status1
           if [ "$status1" == "Failed" ]; then
               echo "Instance refresh failed"
               exit 1
