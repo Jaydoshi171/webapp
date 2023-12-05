@@ -73,20 +73,10 @@ jobs:
               sleep 30  # You can adjust the sleep interval as needed
               echo "Waiting for auto scaling group to refresh"
           done
-          
-          status1=$(aws autoscaling describe-instance-refreshes --auto-scaling-group-name cloud-auto-scaling-group --query 'InstanceRefreshes[0].Status' --output text)
-          if [ "$status1" == "Failed" ]; then
-              echo "Instance refresh failed"
-              exit 1
-            else
-              echo "Instance refresh completed successfully"
-              exit 0
-            fi
-
 
           status1=$(aws autoscaling describe-instance-refreshes --auto-scaling-group-name ${{ secrets.ASG_NAME }} --query 'InstanceRefreshes[0].Status' --output text)
           echo $status1
-          if [ "$status1" == "Failed" ] || [ "$status" == "Cancelled" ]; then
+          if [ "$status1" == "Failed" ] || [ "$status1" == "Cancelled" ]; then
               echo "Instance refresh failed"
               exit 1
             else
