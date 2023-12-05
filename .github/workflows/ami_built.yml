@@ -49,7 +49,7 @@ jobs:
           AWS_REGION: ${{ secrets.AWS_REGION }}
 
         run: |
-          aws ec2 create-launch-template-version --launch-template-name csye6225-instance-20231204064518217000000003 --source-version 1 --launch-template-data '{"ImageId":"${{ env.AMI_ID }}"}'
+          aws ec2 create-launch-template-version --launch-template-name ${{ secrets.LAUNCH_TEMPLATE_NAME }} --source-version 1 --launch-template-data '{"ImageId":"${{ env.AMI_ID }}"}'
           echo "Launch template ID completed"
 
       - name: Instance refresh auto scale to use new launch template version
@@ -58,10 +58,10 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_DEMO_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
         run: |
-          aws autoscaling start-instance-refresh --auto-scaling-group-name cloud-auto-scaling-group
+          aws autoscaling start-instance-refresh --auto-scaling-group-name ${{ secrets.ASG_NAME }}
           check_instance_refresh_status() {
-            status=$(aws autoscaling describe-instance-refreshes --auto-scaling-group-name cloud-auto-scaling-group --query 'InstanceRefreshes[0].Status' --output text)
-            if [ "$status" == "Successful" ] || [ "$status" == "Failed" ]; then
+            status=$(aws autoscaling describe-instance-refreshes --auto-scaling-group-name ${{ secrets.ASG_NAME }} --query 'InstanceRefreshes[0].Status' --output text)
+            if [ "$status" == "Successful" ] || [ "$status" == "Failed" ] || [ "$status" == "Cancelled" ]; then
               return 1
             else
               return 0
@@ -84,9 +84,9 @@ jobs:
             fi
 
 
-          status1=$(aws autoscaling describe-instance-refreshes --auto-scaling-group-name cloud-auto-scaling-group --query 'InstanceRefreshes[0].Status' --output text)
+          status1=$(aws autoscaling describe-instance-refreshes --auto-scaling-group-name ${{ secrets.ASG_NAME }} --query 'InstanceRefreshes[0].Status' --output text)
           echo $status1
-          if [ "$status1" == "Failed" ]; then
+          if [ "$status1" == "Failed" ] || [ "$status" == "Cancelled" ]; then
               echo "Instance refresh failed"
               exit 1
             else
