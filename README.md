@@ -1,9 +1,9 @@
 # webapp
 
-##Repositories
-Web Application: https://github.com/Jaydoshi171/webapp
-Infrastructure Code: https://github.com/Jaydoshi171/iac-pulumi 
-Serverless Code: https://github.com/Jaydoshi171/serverless
+## Repositories
+- Web Application: https://github.com/Jaydoshi171/webapp
+- Infrastructure Code: https://github.com/Jaydoshi171/iac-pulumi 
+- Serverless Code: https://github.com/Jaydoshi171/serverless
 
 ## Index
 - [webapp](#webapp-1)
