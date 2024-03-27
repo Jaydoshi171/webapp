@@ -1,15 +1,11 @@
 # webapp
 
-# webapp
-> ✅ Active status <br>
-
-## About
-| Name          | NUID        |
-| ---           | ---         |
-| Jay Doshi     | 002762973   |
+##Repositories
+Web Application: https://github.com/Jaydoshi171/webapp
+Infrastructure Code: https://github.com/Jaydoshi171/iac-pulumi 
+Serverless Code: https://github.com/Jaydoshi171/serverless
 
 ## Index
-- [webapp](#webapp)
 - [webapp](#webapp-1)
   - [About](#about)
   - [Index](#index)
